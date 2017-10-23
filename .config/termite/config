@@ -1,8 +1,11 @@
 [options]
 font = SauceCodePro Nerd Font Mono Regular 11
+font = DejaVu Sans Mono 13
+# font = SauceCodePro Nerd Font 13
+clickable_url = true
+scrollback_lines = 1000
+cursor_blink = system
 
-
-# Solarized dark color scheme
 [colors]
 foreground = #839496
 foreground_bold = #eee8d5

@@ -100,7 +100,7 @@ case "$mimetype" in
             pygmentize_format=terminal
             highlight_format=ansi
         fi
-        try safepipe $HOME/.local/bin/pygmentize -f ${pygmentize_format} -O style=${pygments_theme} "$path" && { dump | trim; exit 5; }
+        try safepipe pygmentize -f ${pygmentize_format} -O style=${pygments_theme} "$path" && { dump | trim; exit 5; }
         #try safepipe highlight --style=${text_highlight_theme} --out-format=${highlight_format} "$path" && { dump | trim; exit 5; }
         exit 2;;
     # Ascii-previews of images:

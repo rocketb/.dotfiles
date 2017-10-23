@@ -4,18 +4,27 @@
 
 import System.IO
 import System.Exit
+
 import XMonad
+
 import XMonad.Hooks.DynamicLog
-import XMonad.Hooks.ManageDocks
+import XMonad.Hooks.ManageDocks(manageDocks, docks, avoidStruts)
 import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.SetWMName
+import XMonad.Hooks.EwmhDesktops
+
 import XMonad.Layout.Fullscreen
 import XMonad.Layout.NoBorders
 import XMonad.Layout.Spiral
 import XMonad.Layout.Tabbed
 import XMonad.Layout.ThreeColumns
-import XMonad.Util.Run(spawnPipe)
+import XMonad.Layout.Gaps
+import XMonad.Layout.Spacing (spacing)
+
+import XMonad.Util.Run
 import XMonad.Util.EZConfig(additionalKeys)
+
+import Graphics.X11.ExtraTypes.XF86
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
 
@@ -25,7 +34,7 @@ import qualified Data.Map        as M
 -- The preferred terminal program, which is used in a binding below and by
 -- certain contrib modules.
 --
-myTerminal = "/usr/local/bin/termite"
+myTerminal = "/usr/bin/termite"
 
 -- The command to lock the screen or show the screensaver.
 myScreensaver = "/usr/bin/gnome-screensaver-command --lock"
@@ -37,12 +46,10 @@ mySelectScreenshot = "select-screenshot"
 -- The command to take a fullscreen screenshot.
 myScreenshot = "screenshot"
 
--- The command to display volume level
-myVolumeControl = ""
-
 -- The command to use as a launcher, to launch commands that don't have
 -- preset keybindings.
-myLauncher = "$(yeganesh -x -- -fn '-*-terminus-*-r-normal-*-*-120-*-*-*-*-iso8859-*' -nb '#000000' -nf '#FFFFFF' -sb '#7C7C7C' -sf '#CEFFAC')"
+{- myLauncher = "$(yeganesh -x -- -fn '-*-terminus-*-r-normal-*-*-120-*-*-*-*-iso8859-*' -nb '#000000' -nf '#FFFFFF' -sb '#7C7C7C' -sf '#CEFFAC')" -}
+myLauncher = "rofi -terminal termite -modi run -show run"
 
 
 ------------------------------------------------------------------------
@@ -67,20 +74,18 @@ myWorkspaces = ["1:term","2:web","3:code","4:media","5:vm"] ++ map show [6..9]
 -- 'className' and 'resource' are used below.
 --
 myManageHook = composeAll
-    [ className =? "Chromium"       --> doShift "2:web"
-    , className =? "google-chrome"  --> doShift "2:web"
-    , resource  =? "desktop_window" --> doIgnore
-    , className =? "Steam"          --> doFloat
-    , className =? "Gimp"           --> doFloat
-    , className =? "Eog"            --> doFloat
-    , resource  =? "gpicview"       --> doFloat
-    , className =? "MPlayer"        --> doFloat
-    , className =? "Nautilus"       --> doFloat
-    , className =? "KeePass2"       --> doFloat
-    , className =? "Telegram"       --> doShift "4:media"
-    , appName   =? "ICQ"            --> doShift "4:media"
-    , className =? "VirtualBox"     --> doShift "5:vm"
-    , className =? "stalonetray"    --> doIgnore
+    [ className =? "Chromium"           --> doShift "2:web"
+    , className =? "Google-chrome"      --> doShift "2:web"
+    , resource  =? "desktop_window"     --> doIgnore
+    , className =? "Steam"              --> doFloat
+    , className =? "Gimp"               --> doFloat
+    , resource  =? "gpicview"           --> doFloat
+    , className =? "MPlayer"            --> doFloat
+    , className =? "VirtualBox"         --> doShift "5:vm"
+    , className =? "Xchat"              --> doShift "5:media"
+    , className =? "TelegramDesktop"    --> doShift "4:media"
+    , className =? "ICQ"                --> doShift "4:media"
+    , className =? "stalonetray"        --> doIgnore
     , isFullscreen --> (doF W.focusDown <+> doFullFloat)]
 
 
@@ -94,7 +99,7 @@ myManageHook = composeAll
 -- The available layouts.  Note that each layout is separated by |||,
 -- which denotes layout choice.
 --
-myLayout = avoidStruts (
+myLayout = avoidStruts $ spacing 7 (
     ThreeColMid 1 (3/100) (1/2) |||
     Tall 1 (3/100) (1/2) |||
     Mirror (Tall 1 (3/100) (1/2)) |||
@@ -154,7 +159,7 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   , ((modMask .|. controlMask, xK_l),
      spawn myScreensaver)
 
-  -- Spawn the launcher using command specified by myLauncher.
+  -- Spawn the launcher using command specified by "myLauncher.
   -- Use this to launch programs without a key binding.
   , ((modMask, xK_p),
      spawn myLauncher)
@@ -168,16 +173,28 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
      spawn myScreenshot)
 
   -- Mute volume.
+  , ((0, xF86XK_AudioMute),
+     spawn "amixer -q set Master toggle")
+
+  -- Decrease volume.
+  , ((0, xF86XK_AudioLowerVolume),
+     spawn "amixer -q set Master 5%-")
+
+  -- Increase volume.
+  , ((0, xF86XK_AudioRaiseVolume),
+     spawn "amixer -q set Master 5%+")
+
+  -- Mute volume.
   , ((modMask .|. controlMask, xK_m),
-     spawn "amixer -q set Master toggle && get_volume >> /tmp/.volume-pipe")
+     spawn "amixer -q set Master toggle")
 
   -- Decrease volume.
   , ((modMask .|. controlMask, xK_j),
-     spawn "amixer -q set Master 5%- && get_volume >> /tmp/.volume-pipe")
+     spawn "amixer -q set Master 5%-")
 
   -- Increase volume.
   , ((modMask .|. controlMask, xK_k),
-     spawn "amixer -q set Master 5%+ && get_volume >> /tmp/.volume-pipe")
+     spawn "amixer -q set Master 5%+")
 
   -- Audio previous.
   , ((0, 0x1008FF16),
@@ -190,10 +207,6 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   -- Audio next.
   , ((0, 0x1008FF17),
      spawn "")
-
-  -- Eject CD tray.
-  , ((0, 0x1008FF2C),
-     spawn "eject -T")
 
   --------------------------------------------------------------------
   -- "Standard" xmonad key bindings
@@ -362,7 +375,7 @@ main = do
 --
 -- No need to modify this.
 --
-defaults = defaultConfig {
+defaults = docks defaultConfig {
     -- simple stuff
     terminal           = myTerminal,
     focusFollowsMouse  = myFocusFollowsMouse,

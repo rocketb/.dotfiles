@@ -1,0 +1,11 @@
+xkb_keymap {
+	xkb_keycodes  { include "evdev+aliases(qwerty)"	};
+	xkb_types     { include "complete"	};
+	xkb_compat    { include "complete+ledscroll(group_lock)"	};
+	xkb_geometry  { include "pc(pc105)"	};
+	xkb_symbols   "my" {
+        include "pc+us+ru:2+inet(evdev)+group(toggle)"
+        include "capslock(escape)"
+        key <TLDE> { [ asciitilde, grave ] };
+    };
+};
