@@ -8,7 +8,7 @@ import System.Exit
 import XMonad
 
 import XMonad.Hooks.DynamicLog
-import XMonad.Hooks.ManageDocks(manageDocks, docks, avoidStruts)
+import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.SetWMName
 import XMonad.Hooks.EwmhDesktops
@@ -34,7 +34,7 @@ import qualified Data.Map        as M
 -- The preferred terminal program, which is used in a binding below and by
 -- certain contrib modules.
 --
-myTerminal = "/usr/bin/termite"
+myTerminal = "/usr/local/bin/termite"
 
 -- The command to lock the screen or show the screensaver.
 myScreensaver = "/usr/bin/gnome-screensaver-command --lock"
@@ -48,8 +48,8 @@ myScreenshot = "screenshot"
 
 -- The command to use as a launcher, to launch commands that don't have
 -- preset keybindings.
-{- myLauncher = "$(yeganesh -x -- -fn '-*-terminus-*-r-normal-*-*-120-*-*-*-*-iso8859-*' -nb '#000000' -nf '#FFFFFF' -sb '#7C7C7C' -sf '#CEFFAC')" -}
 myLauncher = "rofi -terminal termite -modi run -show run"
+mySshLauncher = "rofi -terminal termite -show ssh"
 
 
 ------------------------------------------------------------------------
@@ -76,15 +76,18 @@ myWorkspaces = ["1:term","2:web","3:code","4:media","5:vm"] ++ map show [6..9]
 myManageHook = composeAll
     [ className =? "Chromium"           --> doShift "2:web"
     , className =? "Google-chrome"      --> doShift "2:web"
+    , className =? "Firefox"            --> doShift "2:web"
     , resource  =? "desktop_window"     --> doIgnore
     , className =? "Steam"              --> doFloat
     , className =? "Gimp"               --> doFloat
     , resource  =? "gpicview"           --> doFloat
     , className =? "MPlayer"            --> doFloat
+    , className =? "KeePass2"           --> doFloat
     , className =? "VirtualBox"         --> doShift "5:vm"
+    , className =? "xfreerdp"           --> doShift "5:vm"
     , className =? "Xchat"              --> doShift "5:media"
     , className =? "TelegramDesktop"    --> doShift "4:media"
-    , className =? "ICQ"                --> doShift "4:media"
+    , className =? "icq"                --> doShift "4:media"
     , className =? "stalonetray"        --> doIgnore
     , isFullscreen --> (doF W.focusDown <+> doFullFloat)]
 
@@ -99,7 +102,7 @@ myManageHook = composeAll
 -- The available layouts.  Note that each layout is separated by |||,
 -- which denotes layout choice.
 --
-myLayout = avoidStruts $ spacing 7 (
+myLayout = avoidStruts (
     ThreeColMid 1 (3/100) (1/2) |||
     Tall 1 (3/100) (1/2) |||
     Mirror (Tall 1 (3/100) (1/2)) |||
@@ -163,6 +166,10 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   -- Use this to launch programs without a key binding.
   , ((modMask, xK_p),
      spawn myLauncher)
+
+  -- Spawn the ssh launcher using command specified by "mySshLauncher".
+  , ((modMask, xK_s),
+     spawn mySshLauncher)
 
   -- Take a selective screenshot using the command specified by mySelectScreenshot.
   , ((modMask .|. shiftMask, xK_p),
@@ -375,7 +382,7 @@ main = do
 --
 -- No need to modify this.
 --
-defaults = docks defaultConfig {
+defaults = defaultConfig {
     -- simple stuff
     terminal           = myTerminal,
     focusFollowsMouse  = myFocusFollowsMouse,

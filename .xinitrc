@@ -27,6 +27,7 @@ fi
 if [ -d $HOME/.config/xkb ]; then
     xkbcomp $HOME/.config/xkb/keymap $DISPLAY
 fi
+xset r rate 250 50
 
 # start some nice programs
 
@@ -40,12 +41,10 @@ fi
 # Configure PATH so that we can access our scripts below
 PATH=$PATH:~/.cabal/bin:~/.xmonad/bin
 
-# twm &
-# xclock -geometry 50x50-1+1 &
-#xterm -geometry 80x50+494+51 &
-#xterm -geometry 80x20+494-0 &
-#exec xterm -geometry 80x66+0+0 -name login
-
-sh ~/.fehbg &
-termite &
+pulseaudio --start --log-target=syslog &
+feh --bg-scale skull.png &
+/home/esv/.xmonad/bin/tray &
+firefox &
+telegram &
+icq &
 exec xmonad

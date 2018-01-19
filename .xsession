@@ -16,7 +16,7 @@ xcompmgr -n &
 #xrandr --output DVI-I-3 --auto --primary
 
 # Start the system tray
-stalonetray &
+tray &
 
 # Start two terminals
 gnome-terminal &

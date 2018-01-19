@@ -5,7 +5,7 @@ export ZSH=/home/esv/.oh-my-zsh
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
-ZSH_THEME="eastwood"
+ZSH_THEME="sunrise"
 
 
 # The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
@@ -18,7 +18,7 @@ HIST_STAMPS="mm.dd.yyyy"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(vi-mode git github colored-man colorize copydir copyfile cp extract history web-search zsh-syntax-highlighting pip pyenv python vagrant docker gitignore themes)
+plugins=(vi-mode ssh-agent git github colored-man colorize copydir copyfile cp extract history web-search zsh-syntax-highlighting pip pyenv python vagrant docker gitignore themes)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -46,8 +46,15 @@ fi
 # Example aliases
 alias zshconfig="nvim ~/.zshrc"
 alias ohmyzsh="nvim ~/.oh-my-zsh"
-alias xclip="xclip -selection c"
+alias xmconfig="nvim ~/.xmonad"
+alias xcp="xclip -selection clipboard"
 alias tmx="tmux attach || tmux new"
+# exa:
+alias la="exa -abghl --git --color=automatic"
+# `cat` with beautiful colors. requires: pip install -U Pygments
+alias c='$HOME/.local/bin/pygmentize -O style=solarized256 -f terminal256 -g'
+# Googler
+alias g='googler -n 7 -c ru -l ru'
 
 export WORKON_HOME=$HOME/.virtualenvs
 # pyenv and virtualenvwrapper
@@ -66,11 +73,16 @@ fi
 
 [[ -s "$HOME/.profile"  ]] && source "$HOME/.profile" # Load the default .profile
 
-# keybindings for history autocomplete
-[[ -n "${key[Up]}" ]] && bindkey "${key[Up]}" history-beginning-search-backward
-[[ -n "${key[Down]}" ]] && bindkey "${key[Down]}" history-beginning-search-forward
-
 # Openstack conf
 if [[ -f $HOME/.openrc.sh ]];then
     source ~/.openrc.sh
 fi
+
+# RUST
+source $HOME/.cargo/env
+
+# FZF
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# z init
+. $HOME/.local/bin/z.sh
