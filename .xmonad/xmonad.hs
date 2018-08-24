@@ -74,21 +74,22 @@ myWorkspaces = ["1:term","2:web","3:code","4:media","5:vm"] ++ map show [6..9]
 -- 'className' and 'resource' are used below.
 --
 myManageHook = composeAll
-    [ className =? "Chromium"           --> doShift "2:web"
-    , className =? "Google-chrome"      --> doShift "2:web"
-    , className =? "Firefox"            --> doShift "2:web"
-    , resource  =? "desktop_window"     --> doIgnore
-    , className =? "Steam"              --> doFloat
-    , className =? "Gimp"               --> doFloat
-    , resource  =? "gpicview"           --> doFloat
-    , className =? "MPlayer"            --> doFloat
-    , className =? "KeePass2"           --> doFloat
-    , className =? "VirtualBox"         --> doShift "5:vm"
-    , className =? "xfreerdp"           --> doShift "5:vm"
-    , className =? "Xchat"              --> doShift "5:media"
-    , className =? "TelegramDesktop"    --> doShift "4:media"
-    , className =? "icq"                --> doShift "4:media"
-    , className =? "stalonetray"        --> doIgnore
+    [ className =? "Chromium"                       --> doShift "2:web"
+    , className =? "Google-chrome"                  --> doShift "2:web"
+    , className =? "Firefox"                        --> doShift "2:web"
+    , className =? "Firefox Developer Edition"      --> doShift "2:web"
+    , resource  =? "desktop_window"                 --> doIgnore
+    , className =? "Steam"                          --> doFloat
+    , className =? "Gimp"                           --> doFloat
+    , resource  =? "gpicview"                       --> doFloat
+    , className =? "MPlayer"                        --> doFloat
+    , className =? "KeePass2"                       --> doFloat
+    , className =? "VirtualBox"                     --> doShift "5:vm"
+    , className =? "xfreerdp"                       --> doShift "5:vm"
+    , className =? "Xchat"                          --> doShift "5:media"
+    , className =? "TelegramDesktop"                --> doShift "4:media"
+    , className =? "icq"                            --> doShift "4:media"
+    , className =? "stalonetray"                    --> doIgnore
     , isFullscreen --> (doF W.focusDown <+> doFullFloat)]
 
 
