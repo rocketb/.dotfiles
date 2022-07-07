@@ -31,40 +31,21 @@ else
   export EDITOR='nvim'
 fi
 
-# ssh
-export SSH_KEY_PATH="~/.ssh/id_rsa"
-
 # Set personal aliases
 # For a full list of active aliases, run `alias`.
+alias v="nvim"
 alias zshconfig="nvim ~/.zshrc"
 alias ohmyzsh="nvim ~/.oh-my-zsh"
 alias tmx="tmux attach || tmux new"
-alias la="ls -la"
+alias la="ls -lah"
+alias k=kubectl
 # `cat` with beautiful colors. requires: pip install -U Pygments
 alias c='pygmentize -O style=monokai -f terminal256 -g'
 # Googler
 alias g='googler -n 7 -c ru -l ru'
 
-# pyenv
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-export WORKON_HOME=$HOME/.virtualenvs
-if [[ -d $HOME/.pyenv ]];then
-    export PATH="$HOME/.pyenv/bin:$PATH"
-    eval "$(pyenv init -)"
-fi
-
-if [[ -n $VIRTUAL_ENV && -e "${VIRTUAL_ENV}/bin/activate" ]]; then
-  source "${VIRTUAL_ENV}/bin/activate"
-fi
-
-# poetry
-export PATH="$HOME/.poetry/bin:$PATH"
-
 # FZF
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-export DYLD_LIBRARY_PATH=/usr/local/Cellar/openssl@1.1/1.1.1f/lib
 
 # Vault autocomplete
 autoload -U +X bashcompinit && bashcompinit
@@ -72,5 +53,7 @@ complete -o nospace -C /usr/local/bin/vault vault
 
 # kubectl
 source <(kubectl completion zsh)
-alias k=kubectl
 complete -F __start_kubectl k
+
+# zoxide
+eval "$(zoxide init zsh)"
