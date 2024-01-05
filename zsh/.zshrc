@@ -34,13 +34,14 @@ fi
 # Set personal aliases
 # For a full list of active aliases, run `alias`.
 alias v="nvim"
+alias vi="nvim"
 alias zshconfig="nvim ~/.zshrc"
 alias ohmyzsh="nvim ~/.oh-my-zsh"
 alias tmx="tmux attach || tmux new"
 alias la="ls -lah"
-alias k=kubectl
-# `cat` with beautiful colors. requires: pip install -U Pygments
-alias c='pygmentize -O style=monokai -f terminal256 -g'
+alias k="kubectl"
+alias c="bat"
+
 # Googler
 alias g='googler -n 7 -c ru -l ru'
 
@@ -57,3 +58,12 @@ complete -F __start_kubectl k
 
 # zoxide
 eval "$(zoxide init zsh)"
+
+# XDG directories
+export XDG_CONFIG_HOME="$HOME/.config"
+
+# Ripgrep https://github.com/BurntSushi/ripgrep
+export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/ripgrep/rc"
+
+eval "$(atuin init zsh)"
+eval "$(atuin init zsh)"

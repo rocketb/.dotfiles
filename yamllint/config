@@ -1,0 +1,20 @@
+---
+# yamllint config
+# https://yamllint.readthedocs.io/en/stable/rules.html
+
+extends: default
+rules:
+  line-length: false           # Do not scream out on line length limit
+  document-start: false        # Do not require '---' at the top
+  comments-indentation: false  # Doesn't play well with deep nesting
+  indentation:
+    level: warning
+    indent-sequences: whatever
+  braces:
+    min-spaces-inside: 0
+    max-spaces-inside: 1
+  brackets:
+    min-spaces-inside: 0
+    max-spaces-inside: 1
+
+#  vim: set ft=yaml ts=2 sw=2 tw=80 et :
