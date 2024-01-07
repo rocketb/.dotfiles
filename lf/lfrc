@@ -1,5 +1,4 @@
 # lf settings
-# github.com/rafi/.config
 
 set shell bash
 set shellopts '-eu'

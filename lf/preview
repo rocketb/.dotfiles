@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # the ultimate preview script
-# github.com/rafi/.config
 # ---
 set -eu
 
