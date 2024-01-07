@@ -1,0 +1,286 @@
+#!/usr/bin/env bash
+
+# bash/aliases
+
+# Useful general shortcuts
+alias sudo='sudo '    # Carry over aliases to the root account when using sudo
+alias watch='watch '  # Make watch work with aliases
+alias c=clear
+alias cal='task cal'
+alias start='{ test -f .tmuxp.* && tmuxp load -y .; } ||
+	{ tmuxp ls | fzf | xargs tmuxp load -y; }'
+
+# Lists ---------------------------------------------------- l for list -- {{{
+LSCMD='ls'
+if [[ "$OSTYPE" == "darwin"* ]]; then
+	# Use GNU tools on OSX instead of BSD
+	hash gdircolors 2>/dev/null && alias dircolors='gdircolors'
+	hash gfind 2>/dev/null && alias find='gfind'
+	hash gsort 2>/dev/null && alias sort='gsort'
+	hash gstat 2>/dev/null && alias stat='gstat'
+	hash gls 2>/dev/null && LSCMD='gls'
+fi
+
+# See https://github.com/Peltoche/lsd
+if hash lsd 2>/dev/null; then
+	LSCMD='lsd'
+# See https://github.com/ogham/exa
+elif hash exa 2>/dev/null; then
+	export EXA_ICON_SPACING=2
+	LSCMD='exa'
+fi
+
+# Listing directory contents
+# shellcheck disable=2139
+alias ls="LC_COLLATE=C ${LSCMD} --color=auto --group-directories-first"
+unset LSCMD
+alias ll='ls -alF'
+alias llh='ls -alFh'
+
+if hash lsd 2>/dev/null || hash exa 2>/dev/null; then
+	alias l='ls -Fa'
+	alias lt='ll --tree --ignore-glob .git'
+	alias lld="ls -al --color=always | grep '^\e\[[0-9*;]*md' --colour=never"
+else
+	alias l='ls -CFa'
+	alias lld='ls -Gal --color=always | grep ^d --colour=never'
+fi
+
+# }}}
+# Editor ---------------------------------------------------- v for vim -- {{{
+
+# Neo/vim shortcuts, use Neovim by default
+# shellcheck disable=2139
+if hash nvim 2>/dev/null; then
+	alias vim=nvim
+	# alias vless="nvim -u $PREFIX/share/nvim/runtime/macros/less.vim"
+	alias suvim='sudo -E nvim'
+else
+	# alias vless="vim -u $PREFIX/share/vim/vim90/macros/less.vim"
+	alias suvim='sudo -E vim'
+fi
+alias v='vim $(fzf)'
+alias vi=vim
+alias ve='tmux split-window -h "$EDITOR"'
+alias vimdiff='vim -d'
+
+# }}}
+# Grepping / Parsing ----------------------------------------------------- {{{
+
+# Productive defaults for grep and tree
+alias grep='grep --color=auto --exclude-dir=.git'
+alias tree='tree -F --dirsfirst -a -I ".git|.hg|.svn|__pycache__|.mypy_cache|.pytest_cache|*.egg-info|.sass-cache|.DS_Store"'
+alias tree2='tree -L 2'
+alias tree3='tree -L 3'
+
+# Head and tail will show as much possible without scrolling
+hash ghead 2>/dev/null && alias cath='ghead -n $((${LINES:-12}-4))'
+hash gtail 2>/dev/null && alias catt='gtail -n $((${LINES:-12}-4)) -s.1'
+
+# Use colordiff by default
+hash colordiff 2>/dev/null && alias diff=colordiff
+
+# }}}
+# Jump around ------------------------------------------- z for jumping -- {{{
+alias cdf='cd "$(dirname "$(fzf)")"'
+alias cdd='cd "$(fd --type d | fzf)"'
+alias cwd='pwd | tr -d "\r\n" | pbcopy'
+
+# Jump to previous directory with --
+alias -- -="cd -"
+
+# Easier directory navigation
+alias ..='cd ..'
+alias ...='cd ../../'
+alias ....='cd ../../../'
+alias .....='cd ../../../../'
+
+# }}}
+# File find ------------------------------------------------ f for find -- {{{
+if hash fd 2>/dev/null; then
+	# Use https://github.com/sharkdp/fd
+	alias f=fd
+	if [ "$BASH" ] && type _fd &>/dev/null; then
+		complete -o bashdefault -o default -F _fd f
+	fi
+else
+	# Slower
+	alias f='find . -iname '
+fi
+
+# }}}
+# Git ------------------------------------------------------- g for git -- {{{
+# See more in ./functions.d/git.bash
+alias g=git
+alias gb='git branch'
+alias gc='git checkout'
+alias gcb='git checkout -b'
+alias gcd='cd "$(git rev-parse --show-toplevel)"'
+alias gd='git diff'
+alias gds='git diff --cached'
+alias gfl='git fetch --prune && git lg -15'
+alias gf='git fetch --prune'
+alias gfa='git fetch --all --tags --prune'
+alias gap='git add -p'
+alias gai='git add -i'
+alias gs='git status -sb'
+alias gl='git lg -15'
+alias gll='git lg'
+alias gld='git lgd -15'
+
+# Attach git aliases auto-completion
+if [ "$BASH" ] && type __git_complete &>/dev/null; then # {{{
+	__git_complete g __git_main
+	__git_complete gb _git_branch
+	__git_complete gc _git_checkout
+	__git_complete gcb _git_checkout
+	__git_complete gd _git_diff
+	__git_complete gds _git_diff
+	__git_complete gf _git_fetch
+	__git_complete gfa _git_fetch
+	__git_complete gl _git_log
+	__git_complete gll _git_log
+	__git_complete gld _git_log
+fi # }}}
+
+# }}}
+# Docker ------------------------------------------------- d for docker -- {{{
+alias d=docker
+alias dk='docker compose'
+alias dps='docker ps --format "table {{.Names}}\\t{{.Image}}\\t{{.Status}}\\t{{ .Ports }}\\t{{.RunningFor}}\\t{{.Command}}\\t{{ .ID }}" | cut -c-$(tput cols)'
+alias dls='docker ps -a --format "table {{.Names}}\\t{{.Image}}\\t{{.Status}}\\t{{ .Ports }}\\t{{.RunningFor}}\\t{{.Command}}\\t{{ .ID }}" | cut -c-$(tput cols)'
+alias dim='docker images --format "table {{.Repository}}\\t{{.Tag}}\\t{{.ID}}\\t{{.Size}}\\t{{.CreatedSince}}"'
+alias dip='docker inspect --format "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}"'
+alias dgc='docker image prune -f'
+alias dvc='docker volume ls -qf dangling=true | xargs docker volume rm'
+alias dtop='docker stats $(docker ps --format="{{.Names}}")'
+# shellcheck disable=2154
+alias dnet='docker network ls && echo && docker inspect --format "{{\$e := . }}{{with .NetworkSettings}} {{\$e.Name}}
+{{range \$index, \$net := .Networks}}  - {{\$index}}	{{.IPAddress}}
+{{end}}{{end}}" $(docker ps -q)'
+# shellcheck disable=2154
+alias dtag='docker inspect --format "{{.Name}}
+{{range \$index, \$label := .Config.Labels}}  - {{\$index}}={{\$label}}
+{{end}}" $(docker ps -q)'
+
+
+if [ "$BASH" ] && type _docker &>/dev/null; then # {{{
+	complete -F _docker d
+	complete -F _docker_compose dk
+	complete -F _docker_images dim
+	complete -F _docker_inspect dip
+	complete -F _docker_rmi dgc
+	complete -F _docker_stats dtop
+fi # }}}
+
+# }}}
+# Kubernetes ----------------------------------------- k for kubernetes -- {{{
+# See more in functions.d/kubernetes.bash
+alias k=kubectl
+alias kc=kubectx
+alias ks='kubectl switch'
+alias kg='kubectl get'
+alias kgp='kubectl get pods'
+alias ke='kubectl edit'
+
+if [ "$BASH" ]; then # {{{
+	# Attach k alias to kubectl completion function
+	if type __start_kubectl &>/dev/null; then
+		complete -o default -F __start_kubectl k
+	fi
+	# Use https://github.com/cykerway/complete-alias for bash alias completion
+	if type _complete_alias &>/dev/null; then
+		complete -F _complete_alias kc
+		complete -F _complete_alias kg
+		complete -F _complete_alias ke
+	fi
+fi # }}}
+
+# }}}
+# Processes -------------------------------------------------------------- {{{
+alias process='ps -ax'
+alias pst='pstree -g 3 -ws'
+
+# }}}
+# Task ----------------------------------------------------- j for just -- {{{
+# See: https://github.com/casey/just
+alias j=just
+alias jc='just --choose'
+if [ -n "$BASH" ] && type _just &>/dev/null; then # {{{
+	complete -F _just -o bashdefault -o default j
+	complete -F _just -o bashdefault -o default jc
+fi # }}}
+
+# }}}
+# Machines --------------------------------------------- m for machines -- {{{
+# See: https://github.com/lima-vm/lima
+alias m=limactl
+
+if [ -n "$BASH" ] && type __start_limactl &>/dev/null; then
+	complete -o default -F __start_limactl m
+fi
+
+# }}}
+# Storage ---------------------------------------------------------------- {{{
+alias dut='du -hsx * | sort -rh | head -10'
+alias duz="du -hsx * | sort -rh | fzf"
+
+# }}}
+# Misc ------------------------------------------------------------------- {{{
+
+alias fontcache='fc-cache -f -v'
+alias fontfind='fc-list : family style'
+alias freq='cut -f1 -d" " "$HISTFILE" | sort | uniq -c | sort -nr | head -n 30'
+alias sniff="sudo ngrep -d 'en1' -t '^(GET|POST) ' 'tcp and port 80'"
+alias ipinfo='curl -s ipinfo.io | jq .'
+alias weather='curl -s v2.wttr.in/Moscow'
+alias ungzip='gzip -d'
+alias untar='tar xvf'
+alias ngrok-http='ngrok http --authtoken="$(pass tokens/ngrok)"'
+alias aspell='aspell -c -l en_US'
+alias ttycast="ttyd -p 8888 bash -c 'tmux new-session -d -s cast \; split-window -d \; attach -t cast'"
+alias ttycast-this="tmux split-window \'ttyd -p 8888 bash -c \'tmux a\'\'"
+# shellcheck disable=2154
+alias multiopen='while read arg; do open "$arg"; done <<<'
+
+# https://github.com/alt-romes/programmer-calculator
+if hash pcalc 2>/dev/null; then
+	alias calc=pcalc
+fi
+
+# }}}
+# OS Specific Network and Filesystem ------------------------------------- {{{
+
+# IP addresses
+alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
+alias iplocal="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'"
+
+if [ "$(uname -s)" = "Darwin" ]; then
+	alias netinfo='networksetup -getinfo "$(networksetup -listallnetworkservices | sed 1d | fzf)"'
+
+	# Show active network interfaces
+	alias ifactive="ifconfig | pcregrep -M -o '^[^\t:]+:([^\n]|\n\t)*status: active'"
+
+	# Flush Directory Service cache
+	alias flush='dscacheutil -flushcache && killall -HUP mDNSResponder'
+
+	alias hwmodel='sysctl -n hw.model'
+	alias osversion='sw_vers -productVersion'
+
+	# Lock the screen (Away From Keyboard)
+	alias afk='open -a ScreenSaverEngine'
+
+	# Recursively delete `.DS_Store` files
+	alias cleanup="find . -type f -name '*.DS_Store' -ls -delete"
+
+	# Empty the Trash on all mounted volumes and the main HDD.
+	# Also, clear Apple’s System Logs to improve shell startup speed.
+	# Finally, clear download history from quarantine. https://mths.be/bum
+	alias emptytrash="sudo rm -rfv /Volumes/*/.Trashes; \
+		sudo rm -rfv ~/.Trash; \
+		sudo rm -rfv /private/var/log/asl/*.asl; \
+		sqlite3 ~/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV* 'delete from LSQuarantineEvent'"
+fi
+# }}}
+
+#  vim: set ft=sh fdm=marker ts=2 sw=2 tw=80 noet :

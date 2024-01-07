@@ -1,0 +1,139 @@
+# inputrc config
+# ---
+# https://www.gnu.org/software/bash/manual/html_node/Readline-Init-File-Syntax.html
+
+$include /etc/inputrc
+
+# Ring the bell, let other programs handle it (urxvt, tmux, etc.)
+set bell-style audible
+
+# Ignore case when matching and completing paths
+set completion-ignore-case on
+
+# Treat underscores and hyphens the same way for completion purposes
+set completion-map-case on
+
+# Show me up to 5,000 completion items, don't be shy
+set completion-query-items 5000
+
+# Don't display control characters like ^C if I input them
+set echo-control-characters off
+
+# Expand tilde to full path on completion
+set expand-tilde on
+
+# Preserve caret position while browsing through history lines
+set history-preserve-point on
+
+# When completing directories, add a trailing slash
+set mark-directories on
+
+# Do the same for symlinked directories
+set mark-symlinked-directories on
+
+# on menu-complete, first display the common prefix, then cycle through the
+# options when hitting TAB
+set menu-complete-display-prefix on
+
+# Don't paginate possible completions
+set page-completions off
+
+# Show multiple completions on first tab press
+set show-all-if-ambiguous on
+
+# ?
+set show-all-if-unmodified on
+
+# Don't re-complete already completed text in the middle of a word
+set skip-completed-text on
+
+# Show extra file information when completing, like `ls -F` does
+set visible-stats on
+
+# Color files by types
+# Note that this may cause completion text blink in some terminals, e.g. xterm
+set colored-stats on
+
+# Color the common prefix
+set colored-completion-prefix on
+
+# vi mode
+# set editing-mode vi
+# toggle cursor on different vi modes
+set show-mode-in-prompt on
+set keyseq-timeout 100
+$if term=linux
+	set vi-ins-mode-string "\1\e[?0c\2"
+	set vi-cmd-mode-string "\1\e[?8c\2"
+$else
+	set vi-ins-mode-string "\1\e[6 q\2"
+	set vi-cmd-mode-string "\1\e[2 q\2"
+$endif
+
+# Emacs key-mappings
+# ---
+set keymap emacs
+
+"\C-x": vi-editing-mode
+"\C-p": history-search-backward
+"\C-n": history-search-forward
+
+# Shortcut for inserting a grep pipeline at eol
+"\C-g": "\e$a | grep "
+
+# Vi-insert mode settings
+# ---
+set keymap vi-insert
+
+"\C-x": emacs-editing-mode
+"\C-p": history-search-backward
+"\C-n": history-search-forward
+"\C-a": beginning-of-line
+"\C-e": end-of-line
+"\C-b": backward-char
+"\C-f": forward-char
+"\C-w": unix-word-rubout
+"\C-k": kill-line
+"\C-l": clear-screen
+
+# Shortcut for inserting a grep pipeline at eol
+"\C-g": "\e$a | grep "
+
+# Ctrl+left/right for word movement
+"\e\e[C": forward-word
+"\e\e[D": backward-word
+"\e[1;5C": forward-word
+"\e[1;5D": backward-word
+
+# Disable left and right cursor movement
+"\e[C": redraw-current-line
+"\e[D": redraw-current-line
+
+# Vi-command mode settings
+# ---
+set keymap vi-command
+
+"\C-x": emacs-editing-mode
+"\C-a": beginning-of-line
+"\C-e": end-of-line
+"\C-b": backward-char
+"\C-f": forward-char
+"\C-w": unix-word-rubout
+"\C-k": kill-line
+"gg": beginning-of-history
+"G": end-of-history
+
+# Shortcut for inserting a grep pipeline at eol
+"\C-g": "$a | grep "
+
+# Ctrl+left/right for word movement
+"\e\e[C": forward-word
+"\e\e[D": backward-word
+"\e[1;5C": forward-word
+"\e[1;5D": backward-word
+
+# Disable left and right cursor movement
+"\e[C": redraw-current-line
+"\e[D": redraw-current-line
+
+#  vim: set ft=readline ts=2 sw=2 tw=80 noet :

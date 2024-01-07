@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# bashrc
+# ---
+
+# Abort if not running interactively
+[[ $- == *i* ]] || return 0
+
+# See sheldon/plugins.toml
+eval "$(sheldon source)"
+
+# Clean-up Apple's useless garbage
+[ -f .DS_Store ] && rm -f .DS_Store
+
+# vim: set ft=sh ts=2 sw=2 tw=80 noet :

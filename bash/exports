@@ -1,0 +1,310 @@
+#!/usr/bin/env bash
+# bash/exports
+# ---
+# References:
+# - https://github.com/milomouse/dotfiles
+# - https://github.com/EvanPurkhiser/dots-personal
+# - https://github.com/davidosomething/dotfiles
+# - https://wiki.archlinux.org/index.php/XDG_Base_Directory_support
+
+# shellcheck disable=1091
+
+export LANG="en_US.UTF-8"
+export LC_CTYPE="$LANG"
+export LC_ALL="$LANG"
+
+# XDG directories
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_STATE_HOME="$HOME/.local/state"
+
+[ -d "$XDG_CONFIG_HOME" ] || mkdir -m 0750 "$XDG_CONFIG_HOME"
+[ -d "$XDG_CACHE_HOME" ]  || mkdir -m 0750 "$XDG_CACHE_HOME"
+[ -d "$XDG_DATA_HOME" ]   || mkdir -m 0750 "$XDG_DATA_HOME"
+[ -d "$XDG_STATE_HOME" ]  || mkdir -m 0750 "$XDG_STATE_HOME"
+
+# Source secrets
+[ -f "$XDG_CONFIG_HOME/.secrets.env" ] && source "$XDG_CONFIG_HOME/.secrets.env"
+
+# macOS
+if [[ "$OSTYPE" == "darwin"* ]]; then
+	PREFIX="${HOMEBREW_PREFIX:-/opt/homebrew}"
+	[ ! -d "$PREFIX" ] && PREFIX="/usr/local"
+	export PREFIX
+
+	export BROWSER=open
+	export XINITRC="$XDG_CONFIG_HOME"/xorg/xinitrc_osx
+	# export XDG_RUNTIME_DIR="$XDG_CACHE_HOME/run"
+	# [ -d "$XDG_RUNTIME_DIR" ] || mkdir -m 0700 "$XDG_RUNTIME_DIR"
+
+	# Ensure Homebrew-provided packages are used instead of system's.
+	export PATH="$PREFIX/bin:$PREFIX/sbin:$PATH"
+
+# Linux
+else
+	export PREFIX=/usr
+	export BROWSER=/usr/bin/google-chrome-stable
+	export XAUTHORITY="$XDG_CACHE_HOME/Xauthority"
+	export XINITRC="$XDG_CONFIG_HOME"/xorg/xinitrc
+
+	# Set the systemd-style DBUS address
+	# export DBUS_SESSION_BUS_ADDRESS=unix:path=$XDG_RUNTIME_DIR/bus
+fi
+
+# Local bin
+PATH="$HOME/.local/bin:$PATH:bin"
+
+# History settings
+export HISTSIZE=20000
+if [ "$BASH" ]; then
+	export HISTFILE="$XDG_CACHE_HOME/bash_history"
+	export HISTFILESIZE=15000000
+	export HISTTIMEFORMAT='[%F %T] '
+	export HISTIGNORE='pwd:jobs:ll:ls:l:history:c:clear'
+	export HISTCONTROL=ignoreboth
+elif [ "$ZSH_VERSION" ]; then
+	export HISTFILE="${XDG_CACHE_HOME}/zsh_history"
+	export SAVEHIST="${HISTSIZE}"
+fi
+
+# Editor and pager
+EDITOR=vim
+if hash nvim 2>/dev/null; then
+	export MANPAGER='nvim +Man!'
+	EDITOR=nvim
+fi
+export EDITOR
+export VISUAL="$EDITOR"
+
+# Desktop and shells
+# ----
+
+# https://www.gnu.org/software/bash/manual/html_node/Readline-Init-File.html
+export INPUTRC="$XDG_CONFIG_HOME/bash/inputrc"
+
+# Zsh
+export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
+
+# export RXVT_SOCKET="$XDG_RUNTIME_DIR/urxvtd"
+export URXVT_PERL_LIB="$XDG_CONFIG_HOME/urxvt/ext"
+
+# Look for terminfo files under data and find system collections
+if [ -d "$XDG_DATA_HOME/terminfo" ]; then
+	export TERMINFO="$XDG_DATA_HOME/terminfo"
+	export TERMINFO_DIRS="$TERMINFO"
+	if [ -d "$PREFIX/share/terminfo" ]; then
+		export TERMINFO_DIRS="$TERMINFO_DIRS:$PREFIX/share/terminfo"
+	fi
+	if [ -d "$PREFIX/opt/ncurses/share/terminfo" ]; then
+		export TERMINFO_DIRS="$TERMINFO_DIRS:$PREFIX/opt/ncurses/share/terminfo"
+	fi
+fi
+
+# Forces QT to use GTK icons
+export DESKTOP_SESSION=gnome
+
+# Pull GTK2 RC files from the standard config location, similar to gtk-3.0
+[ -e /etc/gtk-2.0 ] && export GTK2_RC_FILES="$XDG_CONFIG_HOME/gtk-2.0/gtkrc"
+
+# Set the session ssh-agent socket path (If it's not set)
+# [ -z "$SSH_AUTH_SOCK" ] && export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent"
+
+# See: https://github.com/tmux-python/tmuxp
+export TMUXP_CONFIGDIR="$XDG_CONFIG_HOME/tmuxp"
+
+# Pagers
+# ----
+export PAGER=less
+export LESS="-FiQMXRwJ --incsearch --status-col-width 1"
+export LESSCHARSET="UTF-8"
+export LESSHISTFILE="$XDG_CACHE_HOME/less_history"
+export LESSKEY="$XDG_CONFIG_HOME/lesskey/output"
+
+# Finders
+# ----
+
+# Ripgrep https://github.com/BurntSushi/ripgrep
+export RIPGREP_CONFIG_PATH="$XDG_CONFIG_HOME/ripgrep/rc"
+
+# zk https://github.com/mickael-menu/zk
+export ZK_NOTEBOOK_DIR="$HOME/docs/wiki/.zk/config.toml"
+
+# Cointop  TODO: deprecated
+export COINTOP_CONFIG="$XDG_CONFIG_HOME/cointop/config.toml"
+
+# Ack configuration
+if hash ack 2> /dev/null; then
+	export ACKRC="$XDG_CONFIG_HOME/ack/ackrc"
+	export ACK_PAGER_COLOR="less -x4SRFX"
+fi
+
+export INTELLI_HOME="$XDG_STATE_HOME/intellishell"
+export INTELLI_SKIP_ESC_BIND=1
+
+# jk
+if hash jk 2>/dev/null; then
+	export JK_DIRS="$XDG_DATA_HOME/tldr:$HOME/docs/cheatsheets"
+fi
+
+# Security and Productivity
+# ----
+
+# https://www.gnupg.org/documentation/manuals/gnupg/GPG-Configuration.html
+export GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
+export PASSWORD_STORE_DIR="$HOME/docs/pass/"
+
+hash sshrc 2>/dev/null && export SSHHOME="$XDG_CONFIG_HOME/sshrc"
+
+# Task warrior configuration
+if hash task 2>/dev/null
+then
+	export TASKRC="$XDG_CONFIG_HOME/task/config"
+	export TASKDATA="$XDG_DATA_HOME/task"
+fi
+
+# Downloaders
+# ----
+
+# cURL .netrc location
+if [ -d "$HOME/docs/netrc" ]; then
+	export CURLOPT_NETRC_FILE="$HOME/docs/netrc/config"
+fi
+
+hash http 2>/dev/null && export HTTPIE_CONFIG_DIR="$XDG_CONFIG_HOME/httpie"
+hash wget 2>/dev/null && export WGETRC="$XDG_CONFIG_HOME/wget/config"
+
+# Virtualization
+# ----
+
+# Lima https://github.com/lima-vm/lima
+export LIMA_HOME="$XDG_DATA_HOME/lima"
+# Packer
+export PACKER_CACHE_DIR="$XDG_CACHE_HOME/packer"
+# Vagrant
+export VAGRANT_HOME="$XDG_DATA_HOME/vagrant"
+
+# Databases
+# ----
+
+# PostgreSQL CLI utilities
+export PSQLRC="$XDG_CONFIG_HOME/psql/config"
+export PGCLIRC="$XDG_CONFIG_HOME/pgcli/config"
+# MySQL
+export MYSQL_HISTFILE="$XDG_CACHE_HOME/mysql_history"
+# SQLite
+export SQLITE_HISTORY="$XDG_CACHE_HOME/sqlite_history"
+
+# Kubernetes
+# ----
+
+hash minikube 2>/dev/null && export MINIKUBE_HOME="$XDG_DATA_HOME/minikube"
+
+if hash kubectl 2>/dev/null; then
+	export KREW_ROOT="$XDG_DATA_HOME/krew"
+	PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+fi
+
+# Media
+# ----
+
+# Remote/local MPD host
+export MPD_HOST="music.host"
+
+# export MPDCRON_DIR="$XDG_CONFIG_HOME/mpdcron"
+
+# Data
+# ----
+
+# nextword https://github.com/high-moctane/nextword
+export NEXTWORD_DATA_PATH="$XDG_DATA_HOME/nextword"
+
+
+# Programming Languages
+# ----
+
+# Lua and Luarocks user config
+# export LUAROCKS_CONFIG="$XDG_CONFIG_HOME/luarocks/config.lua"
+# export LUA_PATH="$XDG_DATA_HOME/lua/5.3/share/lua/5.3/?.lua"
+# export LUA_PATH="${LUA_PATH};${XDG_DATA_HOME}/lua/5.3/share/lua/5.3/?/init.lua;;"
+# export LUA_CPATH="$XDG_DATA_HOME/lua/5.3/lib/lua/5.3/?.so;;"
+
+# Go configuration
+if hash go 2>/dev/null; then
+	export GO111MODULE=on
+	export GOPATH="$XDG_DATA_HOME"/go
+	PATH="$PATH:$GOPATH/bin"
+fi
+
+# Node NPM tool configuration
+if hash npm 2>/dev/null; then
+	export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
+	export NVM_DIR="$XDG_DATA_HOME/node"
+	# export N_PREFIX="${XDG_DATA_HOME}/node"
+	# PATH="${N_PREFIX}/bin:$PATH:${XDG_DATA_HOME}/npm/bin"
+fi
+
+if hash yarn 2>/dev/null; then
+	PATH="$XDG_DATA_HOME/yarn/global/node_modules/.bin/:$PATH"
+fi
+
+# Babel
+# export BABEL_CACHE_PATH="$XDG_CACHE_HOME/babel.json"
+
+# Node.js configuration
+if hash node 2>/dev/null; then
+	if [[ "$OSTYPE" == "darwin"* ]]; then
+		export NODE_EXTRA_CA_CERTS="$PREFIX"/etc/ca-certificates/cert.pem
+	fi
+fi
+
+# Python
+# Pending: https://github.com/python/cpython/pull/13208
+export PYTHONHISTORY="$XDG_CACHE_HOME/python_history"
+# Python utilities
+export PYLINTHOME="$XDG_CACHE_HOME/pylint"
+export IPYTHONDIR="$XDG_CONFIG_HOME"/ipython
+#export JUPYTER_CONFIG_DIR="$XDG_CONFIG_HOME"/jupyter
+# Virtualenv managers
+export WORKON_HOME="$XDG_DATA_HOME/python/envs"
+export PIPSI_HOME="$WORKON_HOME"
+export POETRY_VIRTUALENVS_PATH="$XDG_DATA_HOME"/python/poetry
+export POETRY_CONFIG_DIR="$XDG_CONFIG_HOME"/pypoetry
+export POETRY_DATA_DIR="$XDG_DATA_HOME"/pypoetry
+export POETRY_CACHE_DIR="$XDG_CACHE_HOME"/pypoetry
+# pipx https://github.com/pypa/pipx
+if hash pipx 2>/dev/null; then
+	export PIPX_HOME="$XDG_DATA_HOME/python/pipx"
+	export PIPX_BIN_DIR="$XDG_DATA_HOME/python/pipx/bin"
+	PATH="${PIPX_BIN_DIR}:${PATH}"
+fi
+
+# Rust Cargo configuration
+if hash cargo 2>/dev/null; then
+	export RUSTUP_HOME="$XDG_DATA_HOME"/rustup
+	export CARGO_HOME="$XDG_DATA_HOME"/cargo
+	PATH="$XDG_DATA_HOME/cargo/bin:$PATH"
+fi
+
+# Always install ruby gems local to the user
+if hash gem 2>/dev/null; then
+	if [ -d "$PREFIX/opt/ruby/bin" ]; then
+		PATH="$PREFIX/opt/ruby/bin:$PATH"
+	fi
+	export GEMRC="$XDG_CONFIG_HOME/gemrc/config"
+	export GEM_SPEC_CACHE="$XDG_CACHE_HOME/gem/specs"
+	# export GEM_HOME="$HOME/.local/lib/ruby/gems/$(ruby -e 'puts RbConfig::CONFIG["ruby_version"]')"
+	# PATH="$PATH:$GEM_HOME/bin"
+fi
+
+# Haskell cabal configuration
+if hash cabal 2>/dev/null; then
+	PATH="$PATH:$HOME/.cabal/bin"
+fi
+
+unset PREFIX
+
+# Export the final PATH
+export PATH
+
+# vim: set ft=sh ts=2 sw=2 tw=80 noet :
