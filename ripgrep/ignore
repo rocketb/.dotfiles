@@ -36,3 +36,5 @@ tmp/
 /vendor
 /build/
 /dist/
+.venv/
+venv/
