@@ -57,8 +57,9 @@ yabai -m rule --add app='^Tunnelblick$'        manage=off
 yabai -m rule --add app='^Maccy$'              manage=off
 yabai -m rule --add app='^Monosnap$'           manage=off
 yabai -m rule --add app='^Pixelmator'          manage=off
-yabai -m rule --add app='^Todoist$'          manage=off
+yabai -m rule --add app='^Todoist$'            manage=off
 yabai -m rule --add app='^KeePassXC$'          manage=off
+yabai -m rule --add app='^Spotify$'            manage=off
 
 # Placement
 yabai -m rule --add app='^App Store$'        grid=24:24:1:1:22:22
