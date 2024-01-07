@@ -25,7 +25,7 @@ zero:
 #importfeeds:
 #  formats: m3u
 #  relative_to: /mnt/media/music/
-#  dir: /mnt/media/music/_Playlists/
+#  dir: /mnt/media/mus/Playlists/
 #  m3u_name: new_albums.m3u
 play:
   relative_to: ~/mus/
@@ -34,9 +34,5 @@ replaygain:
   auto: no
   albumgain: yes
 mpd:
-  host: music.host
+  host: localhost
   port: 6600
-echonest:
-  auto: no
-  codegen: echoprint-codegen
-  apikey: {{ ECHONEST_TOKEN }}

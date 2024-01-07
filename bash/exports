@@ -209,7 +209,7 @@ fi
 # ----
 
 # Remote/local MPD host
-export MPD_HOST="music.host"
+export MPD_HOST="localhost"
 
 # export MPDCRON_DIR="$XDG_CONFIG_HOME/mpdcron"
 
