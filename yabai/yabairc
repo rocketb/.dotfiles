@@ -6,8 +6,9 @@
 #
 # Reload: yabai --restart-service
 
-sudo yabai --load-sa
-yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
+# Require disabled SIP
+# sudo yabai --load-sa
+# yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
 
 # Reload when displays change
 yabai -m signal --add event=display_added   action="yabai --restart-service"
@@ -17,7 +18,7 @@ yabai -m signal --add event=display_moved   action="yabai --restart-service"
 
 yabai -m config \
 	external_bar               all:0:0      \
-	mouse_follows_focus        off          \
+	mouse_follows_focus        on           \
 	focus_follows_mouse        off          \
 	window_zoom_persist        off          \
 	window_placement           second_child \
@@ -51,6 +52,7 @@ yabai -m rule --add label="Select file to save to" app="^Inkscape$" title="Selec
 
 # Apps
 yabai -m rule --add app='^Calendar$'           manage=off
+yabai -m rule --add app='^Calculator$'           manage=off
 yabai -m rule --add app='^ColorSlurp$'         manage=off
 yabai -m rule --add app='^Dozer$'              manage=off
 yabai -m rule --add app='^Tunnelblick$'        manage=off
@@ -60,6 +62,8 @@ yabai -m rule --add app='^Pixelmator'          manage=off
 yabai -m rule --add app='^Todoist$'            manage=off
 yabai -m rule --add app='^KeePassXC$'          manage=off
 yabai -m rule --add app='^Spotify$'            manage=off
+yabai -m rule --add app='^Mail$'               manage=off
+yabai -m rule --add app='^ChatGPT$'            manage=off
 
 # Placement
 yabai -m rule --add app='^App Store$'        grid=24:24:1:1:22:22
