@@ -7,6 +7,7 @@ alias sudo='sudo '    # Carry over aliases to the root account when using sudo
 alias watch='watch '  # Make watch work with aliases
 alias c=clear
 alias cal='task cal'
+alias ta='task add'
 alias start='{ test -f .tmuxp.* && tmuxp load -y .; } ||
 	{ tmuxp ls | fzf | xargs tmuxp load -y; }'
 
@@ -121,6 +122,7 @@ alias gds='git diff --cached'
 alias gfl='git fetch --prune && git lg -15'
 alias gf='git fetch --prune'
 alias gfa='git fetch --all --tags --prune'
+alias ga='git add'
 alias gap='git add -p'
 alias gai='git add -i'
 alias gs='git status -sb'
