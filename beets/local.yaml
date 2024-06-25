@@ -1,0 +1,3 @@
+directory: ~/mus # Destination.
+library: ~/mus/library.db # Database
+# library: ~/.cache/beets/musiclibrary.blb

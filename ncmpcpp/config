@@ -11,7 +11,7 @@
 ## ncmpcpp.
 ##
 
-ncmpcpp_directory = ~/.config/ncmpcpp
+ncmpcpp_directory = "~/.config/ncmpcpp"
 
 lyrics_directory = ~/.cache/ncmpcpp/lyrics
 
@@ -25,7 +25,7 @@ mpd_port = 6600
 
 ## Needed for tag editor and file operations to work.
 ##
-mpd_music_dir = /mnt/media/music
+mpd_music_dir = "~/mus/"
 
 #mpd_crossfade_time = 5
 #
