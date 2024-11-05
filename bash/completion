@@ -27,6 +27,32 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 
 	# Add `killall` tab completion for common apps
 	complete -o "nospace" -W "Contacts Calendar Dock Finder Mail Safari iTunes SystemUIServer Terminal Twitter" killall
+
+elif [ -f /etc/lsb-release ]; then
+	# Ubuntu/Debian manual bash completions loading
+	if [ -f /usr/share/bash-completion/bash_completion ]; then
+		. /usr/share/bash-completion/bash_completion
+	elif [ -f /etc/bash_completion ]; then
+		. /etc/bash_completion
+	fi
+fi
+
+
+# Complete-alias is used to auto-complete bash aliases.
+# https://github.com/cykerway/complete-alias
+if [ -f "$PREFIX/etc/profile.d/complete_alias" ]; then
+	source "$PREFIX/etc/profile.d/complete_alias"
+fi
+
+# Event pre/post bash hooks implementation.
+# https://github.com/rcaloras/bash-preexec
+if [ -f "$PREFIX/etc/profile.d/bash-preexec.sh" ]; then
+	source "$PREFIX/etc/profile.d/bash-preexec.sh"
+fi
+
+# Google Cloud SDK
+if [ -f "$XDG_DATA_HOME/google-cloud-sdk/completion.bash.inc" ]; then
+	source "$XDG_DATA_HOME/google-cloud-sdk/completion.bash.inc"
 fi
 
 # vim: set ft=sh ts=2 sw=2 tw=80 noet :
