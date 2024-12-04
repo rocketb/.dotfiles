@@ -1,3 +1,6 @@
+[notebook]
+dir = "~/docs/wiki"
+
 [note]
 
 language = "en"
