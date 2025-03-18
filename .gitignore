@@ -3,3 +3,4 @@
 zsh/.zcompdump
 zsh/.zshrc.zwc
 zsh/.zshrc_old
+/.env
