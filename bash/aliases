@@ -262,7 +262,7 @@ alias ,tt=ttdl
 alias ,ttycast-this="tmux split-window \'ttyd -p 8888 bash -c \'tmux a\'\'"
 alias ,ttycast="ttyd -p 8888 bash -c 'tmux new-session -d -s cast \; split-window -d \; attach -t cast'"
 alias ,urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
-alias ,weather='curl -s v2.wttr.in/Tel_Aviv'
+alias ,weather='curl -s v2.wttr.in/Moscow'
 alias ungzip='gzip -d'
 alias untar='tar xvf'
 
