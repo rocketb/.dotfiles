@@ -164,6 +164,12 @@ then
 	export TASKDATA="$XDG_DATA_HOME/task"
 fi
 
+# Zk note-taking assistant
+if hash zk 2>/dev/null
+then
+	export ZK_NOTEBOOK_DIR="$HOME/docs/wiki"
+fi
+
 # Cloud and mobile development
 # ----
 

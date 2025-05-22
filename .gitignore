@@ -8,3 +8,5 @@ zsh/.zshrc_old
 /yazi/**/*.png
 /yazi/**/README*
 /yazi/**/LICENSE*
+zk/notebook.db
+zk/templates
