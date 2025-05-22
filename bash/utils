@@ -90,4 +90,9 @@ fi
 # Pretty prompt.
 eval "$(starship init bash)"
 
+# direnv
+if command -v direnv 1>/dev/null 2>&1; then
+	eval "$(direnv hook bash)"
+fi
+
 # vim: set ft=sh ts=2 sw=2 tw=80 noet :
