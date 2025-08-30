@@ -1,7 +1,7 @@
 # See https://github.com/sxyazi/yazi/blob/main/yazi-config/preset/yazi.toml
 "$schema" = "https://yazi-rs.github.io/schemas/yazi.json"
 
-[manager]
+[mgr]
 linemode       = "size_and_mtime"  # none, size, permissions, mtime
 ratio          = [ 1, 4, 3 ]
 scrolloff      = 3

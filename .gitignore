@@ -4,6 +4,7 @@ zsh/.zcompdump
 zsh/.zshrc.zwc
 zsh/.zshrc_old
 /.env
+/yazi/plugins/
 /yazi/**/DO_NOT_MODIFY_ANYTHING_IN_THIS_DIRECTORY
 /yazi/**/*.png
 /yazi/**/README*
