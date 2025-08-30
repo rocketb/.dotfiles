@@ -153,7 +153,7 @@ export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship/config.toml"
 
 # https://www.gnupg.org/documentation/manuals/gnupg/GPG-Configuration.html
 export GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
-export PASSWORD_STORE_DIR="$HOME/docs/pass/"
+export PASSWORD_STORE_DIR="$HOME/reps/pass/"
 
 hash sshrc 2>/dev/null && export SSHHOME="$XDG_CONFIG_HOME/sshrc"
 
